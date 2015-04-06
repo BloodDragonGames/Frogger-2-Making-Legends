@@ -1,2 +1,11 @@
 # Frogger-2-Making-Legends
-Here's the code tho:
+The code's in the file "mainFrog.html"
+
+
+~~~~~             ~~~~~
+~~~~~             ~~~~~
+~~~~~             ~~~~~
+
+~~                  ~~
+  ~~              ~~
+    ~~~~~~~~~~~~~~
