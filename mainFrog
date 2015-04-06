@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<title>My Big Asteroids Game</title>
+        <script type="text/javascript" src="easel.js"></script>
+        <script src = "http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+        <script src = "http://code.createjs.com/soundjs-0.6.0.min.js"></script>
+  <script type="text/javascript">
+    var stage;
+    var canvas;
+    var frogger;
+    var froggerImg;
+    var froggerImg2;
+    var moveRight=false;
+    var moveLeft=false;     
+    var moveUp=false;
+    var moveDown=false;
+    var speed = 45;
+	var cars = new Array(); //arrays for the cars and their directions
+	var carsDir = new Array();
+	var makeShiftSideWalk1;	//needed sidewalks
+	var makeShiftSideWalk2;
+	var tickCount = 0;	//counts
+	var redCarSpawned = -1;
+	var blueCarSpawned = -1; //stops cars from linking together
+	var truckSpawned = -1;
+	var jumpSpots = new Array(435,385,335,285,230,175,135,85);	//mimics Frogger movement.
+	var curSpot = 0;
+	var floats = new Array(); //arrays for the floating cars and their directions
+	var floatsDir = new Array();
+	var turtleSpawned = -1;
+	var logSpawned = -1;
+	
+    function init(){
+        canvas = document.getElementById("canvas");
+            stage = new Stage(canvas);
+            Ticker.setFPS(35);
+            Ticker.addListener(window);
+            froggerImg = new Image();
+            froggerImg.onload = onfroggerLoaded();
+            froggerImg.src ="frogger.png";
+			
+			makeShiftSideWalk1 = new Shape();
+			makeShiftSideWalk1.graphics.beginFill("#888888").drawRect(0,0,640,50);
+			makeShiftSideWalk1.x = 0;
+			makeShiftSideWalk1.y = 430;
+			stage.addChildAt(makeShiftSideWalk1,0);
+
+			makeShiftSideWalk2 = new Shape();
+			makeShiftSideWalk2.graphics.beginFill("#888888").drawRect(0,0,640,50);
+			makeShiftSideWalk2.x = 0;
+			makeShiftSideWalk2.y = 225;
+			stage.addChildAt(makeShiftSideWalk2,0);
+			
+			
+			/*var c = new Bitmap("car1.png");
+
+				c.x = -107;
+				c.y = 320;
+				cars.push(c);
+				stage.addChild(c);
+				//console.log("yo");
+				carsDir.push(10);*/
+			
+			//createCars();
+			
+            document.onkeydown = onKeyDown;
+            document.onkeyup = onKeyUp;
+    }
+        function onKeyUp(e){
+        if(!e){ var e = window.event;}
+            switch(e.keyCode){
+                //left
+                case 37:moveLeft=true;moveRight = false;
+                break;
+                //right
+                case 39:moveLeft=false;moveRight = true;
+                break;
+                //up
+                case 38:moveUp=true;moveDown = false;
+                break;
+                //down
+                case 40:moveUp=false;moveDown = true;
+                break;
+            }
+        }
+		function createCars(){
+			if(randRange(1,100) > 97){
+				if(redCarSpawned == -1){
+					var c = new Bitmap("car1.png");
+					redCarSpawned = tickCount;
+					c.x = -107;
+					c.y = 330;
+					cars.push(c);
+					stage.addChild(c);
+					//console.log("yo");
+					carsDir.push(5);
+				}
+			}
+			if(randRange(1,100) > 97){
+				if(blueCarSpawned == -1){
+					var c = new Bitmap("car2.png");
+					blueCarSpawned = tickCount;
+					c.x = 747;
+					c.y = 380;
+					cars.push(c);
+					stage.addChild(c);
+					//console.log("yo");
+					carsDir.push(-6);
+				}
+			}
+			if(randRange(1,100) > 98){
+				if(truckSpawned == -1){
+					var c = new Bitmap("truck.png");
+					truckSpawned = tickCount;
+					c.x = 747;
+					c.y = 280;
+					cars.push(c);
+					stage.addChild(c);
+					//console.log("yo");
+					carsDir.push(-10);
+				}
+			}
+			
+		}
+		function updateCars(){
+			if(cars.length != 0){
+				for(i = cars.length-1; i > -1; i--){
+				//console.log(i);
+					cars[i].x += carsDir[i];
+					if(cars[i].x > 748 || cars[i].x < -128){
+					
+						stage.removeChild(cars[i]);
+						cars.splice[i,1];
+						carsDir.splice[i,1];
+				
+					}
+				
+				
+			}
+			}
+			if(tickCount-redCarSpawned == 14){
+				redCarSpawned = -1;
+			}
+			if(tickCount-blueCarSpawned == 12){
+				blueCarSpawned = -1;
+				console.log(cars.length);
+			}
+			if(tickCount-truckSpawned == 15){
+				truckSpawned = -1;
+				//console.log(cars.length);
+			}
+			
+		}
+		function createFloats(){
+			if(randRange(1,100) > 98){
+				if(turtleSpawned == -1){
+					if(randRange(1,100) > 50){
+						var c = new Bitmap("turtles1.png");
+					}else{
+						var c = new Bitmap("turtles2.png");
+					}
+					turtleSpawned = tickCount;
+					c.x = 747;
+					c.y = 170;
+					floats.push(c);
+					stage.addChild(c);
+					//console.log("yo");
+					floatsDir.push(-4);
+				}
+			}
+			if(randRange(1,100) > 98){
+				if(logSpawned == -1){
+					var c = new Bitmap("log.png");
+					logSpawned = tickCount;
+					c.x = -108;
+					c.y = 130;
+					floats.push(c);
+					stage.addChild(c);
+					//console.log("yo");
+					floatsDir.push(2);
+				}
+			}
+		
+		}
+		function updateFloats(){
+			for(i = floats.length-1; i > -1; i--){
+				//console.log(i);
+					floats[i].x += floatsDir[i];
+					if(floats[i].x > 800 || floats[i].x < -128){
+					
+						stage.removeChild(floats[i]);
+						floats.splice[i,1];
+						floatsDir.splice[i,1];
+				
+					}
+			}
+			if(tickCount-turtleSpawned == 44){
+				turtleSpawned = -1;
+			}
+			if(tickCount-logSpawned == 72){
+				logSpawned = -1;
+				//console.log(cars.length);
+			}
+		}
+        function onKeyDown(e){
+        if(!e){ var e = window.event;}
+            switch(e.keyCode){
+                //left
+                //case 37:moveLeft=false;
+                    //break;
+                //right
+                //case 39:moveRight = false;
+                    //break;
+                //up
+                //case 38:moveUp=false;
+                    //break;
+                //down
+                //case 40:moveDown = false;
+                    //break;
+                //case 32:doFire();
+                    //break;
+                //left
+                case 37: frogger.x -= speed; //moveLeft=true;moveRight = false;
+                break;
+                //right
+                case 39: frogger.x += speed;//moveLeft=false;moveRight = true;
+                break;
+                //up
+                case 38: curSpot++;//frogger.y -= speed; //moveUp=true;moveDown = false;
+                break;
+                //down
+                case 40: curSpot--;//frogger.y += speed;//moveUp=false;moveDown = true;
+                break;
+            }
+        }
+        function checkMovement(){
+            if(moveLeft){
+                frogger.x -= speed;          
+                if(frogger.x < 0){
+                    frogger.x= 640;  
+                }
+            }
+            else if(moveRight){
+                frogger.x += speed;
+                if(frogger.x > 640){
+                    frogger.x= 0;    
+                }
+            }
+            else if(moveUp){
+                if(frogger.y - speed > 24){
+                    frogger.y -= speed;  
+                }
+            }
+            else if(moveDown){
+                if(frogger.y + speed < 415){
+                    frogger.y += speed;  
+                }
+            }
+        }
+		function updateFrog(){
+			frogger.y = jumpSpots[curSpot];
+			if(frogger.y == 175){
+				frogger.x -= 4;
+			}
+		}
+		
+        function distance(obj1,obj2){
+            var diffX = obj2.x-obj1.x;
+            var diffY = obj2.y-obj1.y;
+            return Math.sqrt((diffX*diffX)+(diffY*diffY));
+        }
+        function randRange(min,max){
+        return Math.floor(Math.random()*(max-min))+ min;
+        }
+        function tick(){
+            //checkMovement();																							THE TICK IS HERE
+			tickCount++;
+			//console.log(tickCount);
+				/*if(tickCount>200){
+					tickCount = 0;
+				}*/
+				updateFrog();
+			createCars();
+			updateCars();
+			createFloats();
+			updateFloats();
+            stage.update();
+        }
+        function onfroggerLoaded(){
+            frogger = new Bitmap(froggerImg);
+            frogger.scaleX = .4;
+            frogger.scaleY = frogger.scaleX;
+            frogger.regX = frogger.image.width*.5 +65 ;
+            frogger.regY = frogger.image.height*.5;
+            frogger.x = 295;
+            frogger.y = 435;
+            stage.addChildAt(frogger,0);
+        }
+    </script>  
+      </head>
+<body onload="init();"style="background-color:#666;">
+    <div id="wrapper"style="width:640px;height:480px;
+             margin-left:auto; margin-right:auto;
+             background-color:#000000;border:5px ridge #cc8811">
+        <canvas id="canvas"width=640 height=480
+             style= "margin-left:auto; margin-right:auto;">
+         </canvas>
+     </div>
+ </body>   
